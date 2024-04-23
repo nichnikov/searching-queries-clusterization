@@ -4,13 +4,6 @@ python-dotenv
 pandas
 pymystem3
 scikit-learn
-elasticsearch
 pydantic
-aiohttp
-uvicorn
-fastapi
-fastapi-utils
-urllib3
 sentence-transformers
 gensim
-scikit-learn
