@@ -3,10 +3,11 @@ import psycopg2
 import pandas as pd
 from contextlib import suppress
 from psycopg2 import Error
-from pydantic.error_wrappers import ValidationError
+from sqlalchemy import create_engine 
 from src.config import logger
 from src.schemas import UserQuery
 from src.clusterer import user_queries_clustering
+from pydantic.error_wrappers import ValidationError
 
 
 try:
@@ -31,25 +32,16 @@ finally:
         connection.close()
         logger.info("Соединение с PostgreSQL закрыто")
 
-data = []
-for row in rows:
-    with suppress(ValidationError):
-        data.append(UserQuery(*row))
-
+data = [UserQuery(*row) for row in rows]
 data_df = pd.DataFrame(data)
 logger.info("Данные из БД преобразованы в DataFrame размера {}".format(str(data_df.shape)))
 
+
 result_df = user_queries_clustering(data_df)
-result_df.to_csv("queries_with_clusters.csv", sep="\t", index=False)
+conn_string = os.environ['SQLALCHEMY_CON']
+db = create_engine(conn_string)
+conn = db.connect() 
 
-'''
-# with mistakes analysis:
-mistakes = []
-for row in rows:
-    try:
-        data.append(UserQuery(LicensesId=row[0], BitrixId=row[1], Date=row[2], Query=row[3]))
-    except ValidationError:
-        mistakes.append(row) 
+result_df.to_sql("queries_with_clusters", con=conn, if_exists='replace', index=False)
 
-print(mistakes)
-'''
+# 94463

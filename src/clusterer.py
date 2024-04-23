@@ -70,6 +70,10 @@ def user_queries_clustering(df: pd.DataFrame):
     
     result_df = pd.concat(result_dfs, axis=0)
     
+    result_df["new_licensesId"] = result_df["new_licensesId"].astype("string")
+    result_df["payload_request_string"] = result_df["payload_request_string"].astype("string")
+    result_df["cluster_num"] = result_df["cluster_num"].astype(int)
+
     logger.info("Результирующий датафрейм с размерностью: {}".format(str(result_df.shape)))
     result_df.drop("lem_request_string", axis=1, inplace=True)
 
