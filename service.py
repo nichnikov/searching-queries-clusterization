@@ -10,6 +10,9 @@ db = create_engine(conn_string)
 conn = db.connect() 
 
 data_df = pd.read_sql_table("hs_test_data_for_reform_recognition_dev", schema="kharlashin", con=conn)
+
+"""Переименуем поля входящего датасета в соответствие с требованиями функции user_queries_clustering"""
+
 data_df.rename(columns={"new_licensesId": "new_licensesId",
                         "new_BitrixId": "BitrixId",
                         "servertimestamp": "serverTimestamp",
